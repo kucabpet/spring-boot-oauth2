@@ -12,15 +12,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.security.core.userdetails.UserDetailsService;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
 @Component("userDetailsService")
-public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
-    private final Logger log = LoggerFactory.getLogger(UserDetailsService.class);
+    private final Logger log = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -33,7 +32,7 @@ public class UserDetailsService implements org.springframework.security.core.use
         String lowercaseLogin = login.toLowerCase();
 
         User userFromDatabase;
-        if(lowercaseLogin.contains("@")) {
+        if (lowercaseLogin.contains("@")) {
             userFromDatabase = userRepository.findByEmail(lowercaseLogin);
         } else {
             userFromDatabase = userRepository.findByUsernameCaseInsensitive(lowercaseLogin);
@@ -47,11 +46,16 @@ public class UserDetailsService implements org.springframework.security.core.use
 
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         for (Authority authority : userFromDatabase.getAuthorities()) {
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(authority.getName());
+            GrantedAuthority grantedAuthority = 
+                    new SimpleGrantedAuthority(authority.getName());
             grantedAuthorities.add(grantedAuthority);
         }
 
-        return new org.springframework.security.core.userdetails.User(userFromDatabase.getUsername(), userFromDatabase.getPassword(), grantedAuthorities);
+        return new org.springframework.security.core.userdetails.User(
+                userFromDatabase.getUsername(),
+                userFromDatabase.getPassword(), 
+                grantedAuthorities
+        );
 
     }
 

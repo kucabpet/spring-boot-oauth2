@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import org.springframework.http.HttpStatus;
 
 
 /**
@@ -39,15 +40,17 @@ public class CustomLogoutSuccessHandler
 
         if (token != null && token.startsWith(BEARER_AUTHENTICATION)) {
 
-            OAuth2AccessToken oAuth2AccessToken = tokenStore.readAccessToken(token.split(" ")[0]);
+            OAuth2AccessToken oAuth2AccessToken = tokenStore.readAccessToken(token.split(" ")[1]);
 
             if (oAuth2AccessToken != null) {
                 tokenStore.removeAccessToken(oAuth2AccessToken);
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {            
+                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             }
-
         }
 
-        response.setStatus(HttpServletResponse.SC_OK);
+        
 
     }
 
