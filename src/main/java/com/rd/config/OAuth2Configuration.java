@@ -54,8 +54,6 @@ public class OAuth2Configuration {
                     .disable()
                     .headers()
                     .frameOptions().disable()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                     .authorizeRequests()
                     .antMatchers("/hello/").permitAll()
