@@ -1,6 +1,7 @@
 package com.rd.utils;
 
 import com.rd.services.models.User;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -9,11 +10,9 @@ import com.rd.services.models.User;
 public class UserUtils {
 
     public static String printUser(User user) {
-        int counter = 0;
-
+                
         return String.format(
-                "User %d [%s, %s, %s, %s, Authorities [%s]]",
-                ++counter,
+                "User [%s, %s, %s, %s, [%s]]",
                 user.getUsername(),
                 user.getEmail(),
                 user.getActivationKey(),
@@ -21,7 +20,9 @@ public class UserUtils {
                 user.getAuthorities()
                         .stream()
                         .map(e -> {
-                            return String.format(" %s ", e.getName());
-                        }));
+                            return e != null ? String.format(" %s ", e.getName())  : "";
+                        })
+                        .collect(Collectors.joining(", "))
+        );
     }
 }

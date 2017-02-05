@@ -1,5 +1,6 @@
 package com.rd;
 
+import com.rd.repositories.AuthorityRepository;
 import com.rd.repositories.UserRepository;
 import com.rd.services.models.User;
 import com.rd.utils.UserUtils;
@@ -16,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static com.rd.utils.UserUtils.*;
+import javax.management.monitor.CounterMonitor;
+import org.hibernate.Hibernate;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
@@ -34,7 +37,7 @@ public class SpringBootOauth2ApplicationTests {
 
     @Autowired
     private UserRepository userRepository;
-            
+
     @Test
     public void findAllTest() {
 
@@ -44,10 +47,13 @@ public class SpringBootOauth2ApplicationTests {
         Assert.assertNotEquals("Expected not empty", 0, users.size());
 
         log.info("Users: ");
-        users.forEach(e -> {
-            Assert.assertNotNull("Expected not null", e);
-            log.info(printUser(e));
-        });
+
+        for (int i = 0; i < users.size(); i++) {
+            User u = users.get(i);
+            
+            Assert.assertNotNull("Expected not null", u);
+            log.info((i+1) + ". " + printUser(u));
+        }
     }
 
 }

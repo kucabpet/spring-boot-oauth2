@@ -3,10 +3,18 @@ package com.rd.services.models;
 import java.io.Serializable;
 import org.hibernate.validator.constraints.Email;
 
-import javax.persistence.*;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
+@Table(name = "\"user\"")
 @Entity
 public class User implements Serializable {
 
@@ -32,7 +40,7 @@ public class User implements Serializable {
     @Column(name = "resetpasswordkey")
     private String resetPasswordKey;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_authority",
             joinColumns = @JoinColumn(name = "username"),
