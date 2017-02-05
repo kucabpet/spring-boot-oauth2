@@ -1,4 +1,4 @@
-package com.rd.domain;
+package com.rd.services.models;
 
 public class Greeting {
 

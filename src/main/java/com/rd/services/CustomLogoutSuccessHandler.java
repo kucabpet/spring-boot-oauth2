@@ -1,4 +1,4 @@
-package com.rd.security;
+package com.rd.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 
@@ -22,10 +23,8 @@ import org.springframework.http.HttpStatus;
 public class CustomLogoutSuccessHandler
         extends AbstractAuthenticationTargetUrlRequestHandler
         implements LogoutSuccessHandler {
-
-
+    
     private static final String BEARER_AUTHENTICATION = "Bearer ";
-    private static final String HEADER_AUTHORIZATION = "authorization";
 
     @Autowired
     private TokenStore tokenStore;
@@ -36,8 +35,8 @@ public class CustomLogoutSuccessHandler
                                 Authentication authentication)
             throws IOException, ServletException {
 
-        String token = request.getHeader(HEADER_AUTHORIZATION);
-
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        
         if (token != null && token.startsWith(BEARER_AUTHENTICATION)) {
 
             OAuth2AccessToken oAuth2AccessToken = tokenStore.readAccessToken(token.split(" ")[1]);
@@ -49,9 +48,5 @@ public class CustomLogoutSuccessHandler
                 response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             }
         }
-
-        
-
     }
-
 }

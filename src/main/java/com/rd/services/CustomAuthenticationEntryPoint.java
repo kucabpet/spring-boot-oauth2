@@ -1,4 +1,4 @@
-package com.rd.security;
+package com.rd.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +19,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     private final Logger log = LoggerFactory.getLogger(CustomAuthenticationEntryPoint.class);
 
+    @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
-                         AuthenticationException ae) throws IOException, ServletException {
+                         AuthenticationException exception) throws IOException, ServletException {
 
         log.info("Pre-authenticated entry point called. Rejecting access");
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Denied");

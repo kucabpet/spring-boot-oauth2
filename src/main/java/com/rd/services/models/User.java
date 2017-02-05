@@ -1,5 +1,6 @@
-package com.rd.domain;
+package com.rd.services.models;
 
+import java.io.Serializable;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
@@ -7,7 +8,7 @@ import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
-public class User {
+public class User implements Serializable {
 
     @Id
     @Column(updatable = false, nullable = false)
@@ -109,18 +110,5 @@ public class User {
     @Override
     public int hashCode() {
         return username.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", activated='" + activated + '\'' +
-                ", activationKey='" + activationKey + '\'' +
-                ", resetPasswordKey='" + resetPasswordKey + '\'' +
-                ", authorities=" + authorities +
-                '}';
     }
 }

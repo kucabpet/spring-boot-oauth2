@@ -1,8 +1,9 @@
 package com.rd.config;
 
-import com.rd.security.Authorities;
-import com.rd.security.CustomAuthenticationEntryPoint;
-import com.rd.security.CustomLogoutSuccessHandler;
+import com.rd.services.models.Authorities;
+import com.rd.services.CustomAuthenticationEntryPoint;
+import com.rd.services.CustomLogoutSuccessHandler;
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
@@ -24,10 +25,13 @@ import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
+import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
 @Configuration
 public class OAuth2Configuration {
-
+    
     @Configuration
     @EnableResourceServer
     protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
@@ -41,23 +45,23 @@ public class OAuth2Configuration {
         @Override
         public void configure(HttpSecurity http) throws Exception {
 
-            http
+            http                    
                     .exceptionHandling()
-                    .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
                     .and()
-                    .logout()
-                    .logoutUrl("/oauth/logout")
-                    .logoutSuccessHandler(customLogoutSuccessHandler)
+                        .logout()
+                            .logoutUrl("/oauth/logout")
+                            .logoutSuccessHandler(customLogoutSuccessHandler)
                     .and()
-                    .csrf()
-                    .requireCsrfProtectionMatcher(new AntPathRequestMatcher("/oauth/authorize"))
-                    .disable()
-                    .headers()
-                    .frameOptions().disable()
+                        .csrf()
+                        .requireCsrfProtectionMatcher(new AntPathRequestMatcher("/oauth/authorize"))
+                        .disable()
+                        .headers()
+                        .frameOptions().disable()
                     .and()
-                    .authorizeRequests()
-                    .antMatchers("/hello/").permitAll()
-                    .antMatchers("/secure/**").authenticated();
+                        .authorizeRequests()
+                        .antMatchers("/hello/").permitAll()
+                        .antMatchers("/secure/**").authenticated();
 
         }
 
@@ -65,21 +69,13 @@ public class OAuth2Configuration {
 
     @Configuration
     @EnableAuthorizationServer
-    protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter implements EnvironmentAware {
+    protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
-        private static final String ENV_OAUTH = "authentication.oauth.";
-        private static final String PROP_CLIENTID = "clientid";
-        private static final String PROP_SECRET = "secret";
-        private static final String PROP_TOKEN_VALIDITY_SECONDS = "tokenValidityInSeconds";
-
-        private RelaxedPropertyResolver propertyResolver;
-
-        @Autowired
-        private DataSource dataSource;
-
+        private static final int TOKEN_VALIDY_SECOND = 1800;
+        
         @Bean
         public TokenStore tokenStore() {
-            return new JdbcTokenStore(dataSource);
+            return new InMemoryTokenStore();
         }
 
         @Autowired
@@ -92,25 +88,20 @@ public class OAuth2Configuration {
             endpoints
                     .tokenStore(tokenStore())
                     .authenticationManager(authenticationManager);
+                    
         }
 
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
             clients
                     .inMemory()
-                    .withClient(propertyResolver.getProperty(PROP_CLIENTID))
-                    .scopes("read", "write")
-                    .authorities(Authorities.ROLE_ADMIN.name(), Authorities.ROLE_USER.name())
-                    .authorizedGrantTypes("password", "refresh_token")
-                    .secret(propertyResolver.getProperty(PROP_SECRET))
-                    .accessTokenValiditySeconds(propertyResolver.getProperty(PROP_TOKEN_VALIDITY_SECONDS, Integer.class, 1800));
+                        .withClient("client")
+                        .secret("secret")
+                        .scopes("read", "write")
+                        .authorizedGrantTypes("password", "refresh_token")
+                        .authorities(Authorities.ROLE_ADMIN.name(), Authorities.ROLE_USER.name())
+                        .accessTokenValiditySeconds(TOKEN_VALIDY_SECOND);
         }
-
-        @Override
-        public void setEnvironment(Environment environment) {
-            this.propertyResolver = new RelaxedPropertyResolver(environment, ENV_OAUTH);
-        }
-
     }
 
 }

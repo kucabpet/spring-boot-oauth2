@@ -1,6 +1,6 @@
-package com.rd.repository;
+package com.rd.repositories;
 
-import com.rd.domain.User;
+import com.rd.services.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

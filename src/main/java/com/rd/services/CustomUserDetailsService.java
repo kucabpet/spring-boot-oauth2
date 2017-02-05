@@ -1,8 +1,8 @@
-package com.rd.security;
+package com.rd.services;
 
-import com.rd.domain.Authority;
-import com.rd.domain.User;
-import com.rd.repository.UserRepository;
+import com.rd.services.models.Authority;
+import com.rd.services.models.User;
+import com.rd.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.Collection;
 @Component("userDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final Logger log = LoggerFactory.getLogger(CustomUserDetailsService.class);
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private UserRepository userRepository;

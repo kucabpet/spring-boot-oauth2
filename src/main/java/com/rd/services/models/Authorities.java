@@ -1,4 +1,4 @@
-package com.rd.security;
+package com.rd.services.models;
 
 public enum Authorities {
 

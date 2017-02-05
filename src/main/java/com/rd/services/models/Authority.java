@@ -1,4 +1,4 @@
-package com.rd.domain;
+package com.rd.services.models;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -37,12 +37,4 @@ public class Authority {
     public int hashCode() {
         return name.hashCode();
     }
-
-    @Override
-    public String toString() {
-        return "Authority{" +
-                "name='" + name + '\'' +
-                '}';
-    }
-
 }
